@@ -2,12 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import random
-from flask_cors import CORS 
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bugs.db'
 db = SQLAlchemy(app)
+
+# Enable CORS for all routes
+CORS(app)
 
 # Bug Model
 class Bug(db.Model):
@@ -40,17 +43,17 @@ def index():
     bugs = Bug.query.order_by(Bug.date_reported.desc()).all()
     total_bugs = len(bugs)
     show_celebration = total_bugs > 0 and total_bugs % 100 == 0
-    
+
     if show_celebration:
         celebration_message = random.choice(CELEBRATION_MESSAGES)
     else:
         celebration_message = None
-        
+
     return render_template('index.html', 
-                         bugs=bugs, 
-                         total_bugs=total_bugs,
-                         show_celebration=show_celebration,
-                         celebration_message=celebration_message)
+                           bugs=bugs, 
+                           total_bugs=total_bugs,
+                           show_celebration=show_celebration,
+                           celebration_message=celebration_message)
 
 @app.route('/add_bug', methods=['GET', 'POST'])
 def add_bug():
@@ -59,20 +62,20 @@ def add_bug():
         description = request.form['description']
         severity = request.form['severity']
         reported_by = request.form['reported_by']
-        
+
         new_bug = Bug(
             title=title,
             description=description,
             severity=severity,
             reported_by=reported_by
         )
-        
+
         db.session.add(new_bug)
         db.session.commit()
-        
+
         flash('Bug reported successfully! 🐛', 'success')
         return redirect(url_for('index'))
-        
+
     return render_template('add_bug.html')
 
 @app.route('/update_status/<int:id>', methods=['POST'])
@@ -82,12 +85,11 @@ def update_status(id):
     db.session.commit()
     return redirect(url_for('index'))
 
-
-
+# New API endpoint to get all bugs
 @app.route('/api/bugs', methods=['GET'])
 def get_bugs():
-    bugs = Bug.query.all()
-    return {
+    bugs = Bug.query.order_by(Bug.date_reported.desc()).all()
+    return jsonify({
         'bugs': [
             {
                 'id': bug.id,
@@ -100,9 +102,7 @@ def get_bugs():
             }
             for bug in bugs
         ]
-    }
-
-
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

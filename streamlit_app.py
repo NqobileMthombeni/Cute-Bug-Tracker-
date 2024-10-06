@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Set the title of the Streamlit app
-st.title("Cute Bug Tracker 🐛")
+st.title("🐛 Cute Bug Tracker 🦋")
 
 # Form to add a new bug
 with st.form(key='add_bug_form'):
