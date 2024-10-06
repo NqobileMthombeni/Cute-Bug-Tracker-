@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import random
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -55,28 +55,24 @@ def index():
                            show_celebration=show_celebration,
                            celebration_message=celebration_message)
 
-@app.route('/add_bug', methods=['GET', 'POST'])
+@app.route('/add_bug', methods=['POST'])
 def add_bug():
-    if request.method == 'POST':
-        title = request.form['title']
-        description = request.form['description']
-        severity = request.form['severity']
-        reported_by = request.form['reported_by']
+    title = request.form['title']
+    description = request.form['description']
+    severity = request.form['severity']
+    reported_by = request.form['reported_by']
 
-        new_bug = Bug(
-            title=title,
-            description=description,
-            severity=severity,
-            reported_by=reported_by
-        )
+    new_bug = Bug(
+        title=title,
+        description=description,
+        severity=severity,
+        reported_by=reported_by
+    )
 
-        db.session.add(new_bug)
-        db.session.commit()
+    db.session.add(new_bug)
+    db.session.commit()
 
-        flash('Bug reported successfully! 🐛', 'success')
-        return redirect(url_for('index'))
-
-    return render_template('add_bug.html')
+    return jsonify({'message': 'Bug reported successfully!'}), 201  # Return JSON
 
 @app.route('/update_status/<int:id>', methods=['POST'])
 def update_status(id):
