@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import random
+from flask_cors import CORS 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -80,6 +81,28 @@ def update_status(id):
     bug.status = 'Closed' if bug.status == 'Open' else 'Open'
     db.session.commit()
     return redirect(url_for('index'))
+
+
+
+@app.route('/api/bugs', methods=['GET'])
+def get_bugs():
+    bugs = Bug.query.all()
+    return {
+        'bugs': [
+            {
+                'id': bug.id,
+                'title': bug.title,
+                'description': bug.description,
+                'status': bug.status,
+                'severity': bug.severity,
+                'reported_by': bug.reported_by,
+                'date_reported': bug.date_reported.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            for bug in bugs
+        ]
+    }
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
