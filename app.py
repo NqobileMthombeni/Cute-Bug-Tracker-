@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import random
 from flask_cors import CORS 
-import streamlit as st  # Import Streamlit
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -83,6 +82,8 @@ def update_status(id):
     db.session.commit()
     return redirect(url_for('index'))
 
+
+
 @app.route('/api/bugs', methods=['GET'])
 def get_bugs():
     bugs = Bug.query.all()
@@ -101,10 +102,7 @@ def get_bugs():
         ]
     }
 
-# Streamlit integration
-st.title("Bug Tracker")
-st.write("Welcome to the Bug Tracker App!")
 
-# Conditional app running
+
 if __name__ == '__main__':
-    app.run(debug=True)  # This will only run if you're not using Streamlit
+    app.run(debug=True)
