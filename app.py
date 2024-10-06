@@ -104,5 +104,13 @@ def get_bugs():
         ]
     })
 
+# New API endpoint to delete a bug
+@app.route('/delete_bug/<int:id>', methods=['DELETE'])
+def delete_bug(id):
+    bug = Bug.query.get_or_404(id)
+    db.session.delete(bug)
+    db.session.commit()
+    return jsonify({'message': 'Bug deleted successfully'}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)

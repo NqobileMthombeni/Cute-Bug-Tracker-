@@ -8,11 +8,11 @@ st.title("🐛 Cute Bug Tracker 🦋")
 with st.form(key='add_bug_form'):
     title = st.text_input("Title")
     description = st.text_area("Description")
-    severity = st.selectbox("Severity", ["Low 😊", "Medium 😐", "High 😰"])
+    severity = st.selectbox("Severity", ["Low 😊", "Medium 😐 ", "High 😰"])
     reported_by = st.text_input("Reported By")
-    
-    submit_button = st.form_submit_button(label='Report Bug')
-    
+
+    submit_button = st.form_submit_button(label='Report a New Bug 🪲')
+
     if submit_button:
         # Send a POST request to the Flask app to add the bug
         response = requests.post('http://127.0.0.1:5000/add_bug', data={
@@ -26,7 +26,7 @@ with st.form(key='add_bug_form'):
         else:
             st.error("Failed to report the bug.")
 
-## Display all reported bugs
+# Display all reported bugs
 st.subheader("Reported Bugs")
 
 # Get the bugs from the Flask API
@@ -35,5 +35,14 @@ if response.ok:
     bugs = response.json().get('bugs', [])  # Use .get() to avoid KeyError
     for bug in bugs:
         st.write(f"**{bug['title']}** - {bug['status']} - Reported by: {bug['reported_by']}")
+        
+        # Button to delete the bug
+        if st.button(f"Delete Bug {bug['id']}"):
+            delete_response = requests.delete(f'http://127.0.0.1:5000/delete_bug/{bug["id"]}')
+            if delete_response.ok:
+                st.success("Bug deleted successfully! 🐛")
+                st.rerun()  # Refresh the app
+            else:
+                st.error("Failed to delete the bug.")
 else:
     st.error("Failed to load bugs.")
