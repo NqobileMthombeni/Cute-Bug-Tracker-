@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if show_celebration %}
+        <div class="celebration">
+            <h2>{{ celebration_message }}</h2>
+        </div>
+    {% endif %}
+    
+    <div class="text-center mb-4">
+        <h3>Total Bugs Tracked: {{ total_bugs }}</h3>
+        <a href="{{ url_for('add_bug') }}" class="btn btn-primary">Report New Bug 🪲</a>
+    </div>
+
+    <div class="row">
+        {% for bug in bugs %}
+            <div class="col-md-6">
+                <div class="card bug-card severity-{{ bug.severity.lower() }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ bug.title }}</h5>
+                        <p class="card-text">{{ bug.description }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-{{ 'success' if bug.status == 'Closed' else 'warning' }}">
+                                {{ bug.status }}
+                            </span>
+                            <small class="text-muted">Reported by: {{ bug.reported_by }}</small>
+                        </div>
+                        <div class="mt-2">
+                            <form action="{{ url_for('update_status', id=bug.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-{{ 'success' if bug.status == 'Open' else 'warning' }}">
+                                    {{ 'Mark as Fixed ✅' if bug.status == 'Open' else 'Reopen Bug 🔄' }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
