@@ -2,13 +2,13 @@ import streamlit as st
 import requests
 
 # Set the title of the Streamlit app
-st.title("Cute Bug Tracker")
+st.title("Cute Bug Tracker 🐛")
 
 # Form to add a new bug
 with st.form(key='add_bug_form'):
     title = st.text_input("Title")
     description = st.text_area("Description")
-    severity = st.selectbox("Severity", ["Low", "Medium", "High"])
+    severity = st.selectbox("Severity", ["Low 😊", "Medium 😐", "High 😰"])
     reported_by = st.text_input("Reported By")
     
     submit_button = st.form_submit_button(label='Report Bug')
